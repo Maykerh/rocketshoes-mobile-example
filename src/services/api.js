@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { createStore } from 'redux';
 
 const api = axios.create({
-    baseURL: 'https://192.168.0.6:3333',
+    baseURL: 'http://192.168.10.1:3333',
 });
 
 export default api;

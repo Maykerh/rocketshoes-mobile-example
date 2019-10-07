@@ -3,7 +3,20 @@ import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import Header from '../../components/Header';
 
-import { Container } from './styles';
+import { formatPrice } from '../../util/format';
+
+import {
+    Container,
+    ProductCard,
+    ProductList,
+    ProductImage,
+    ProductTitle,
+    AddButton,
+    ButtonText,
+    QuantityWrapper,
+    ButtonTextWrapper,
+    PriceText,
+} from './styles';
 
 import api from '../../services/api';
 
@@ -28,14 +41,42 @@ export default class Home extends Component {
 
     async loadProducts() {
         const result = await api.get('/products');
-        alert(result);
-        console.tron.log(result);
+
+        const data = result.data.map(product => ({
+            ...product,
+            titleFormated: product.title.substr(0, 40),
+            priceFormatted: formatPrice(product.price),
+        }));
+
+        this.setState({
+            products: data,
+        });
+    }
+
+    renderProducts(product) {
+        console.tron.log(product);
+        return (
+            <ProductCard key={product.item.id}>
+                <ProductImage source={{ uri: product.item.image }} />
+                <ProductTitle>{product.item.titleFormated}</ProductTitle>
+                <PriceText>{product.item.priceFormatted}</PriceText>
+                <AddButton>
+                    <QuantityWrapper>
+                        <ButtonText>{0}</ButtonText>
+                    </QuantityWrapper>
+                    <ButtonTextWrapper>
+                        <ButtonText>{'Adicionar'}</ButtonText>
+                    </ButtonTextWrapper>
+                </AddButton>
+            </ProductCard>
+        );
     }
 
     render() {
+        const { products } = this.state;
         return (
             <Container>
-                <Text>{'product'}</Text>
+                <ProductList data={products} renderItem={this.renderProducts} />
             </Container>
         );
     }
