@@ -6,11 +6,15 @@ export const Container = styled.View`
     padding: 15px;
 `;
 
-export const CartWrapper = styled.ScrollView`
-    background-color: #fff;
-    height: auto;
+export const CartScrollView = styled.ScrollView`
+    height: 100%;
     width: 100%;
-    /* margin-right: 15px; */
+    border-radius: 5px;
+`;
+
+export const CartWrapper = styled.View`
+    flex: 1;
+    background-color: #fff;
     border-radius: 5px;
     padding: 20px;
 `;
@@ -21,6 +25,7 @@ export const ProductCard = styled.View`
     width: 100%;
     margin-right: 15px;
     border-radius: 5px;
+    margin-bottom: 10px;
 `;
 
 export const ProductInfo = styled.View`
@@ -37,9 +42,7 @@ export const ProductImage = styled.Image`
 `;
 
 export const ProductDescription = styled.View`
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex: 1;
     justify-content: center;
     height: 120px;
     margin-left: 15px;
@@ -68,6 +71,18 @@ export const QuantityBand = styled.View`
     padding: 0 15px 0 15px;
 `;
 
+export const QuantityActions = styled.View`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`;
+
+export const QuantityButton = styled.TouchableOpacity`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+`;
+
 export const Quantity = styled.TextInput`
     background-color: #fff;
     width: 60px;
@@ -77,6 +92,7 @@ export const Quantity = styled.TextInput`
     font-size: 18px;
     color: #333333;
     border-radius: 5px;
+    margin: 0 5px 0 5px;
 `;
 
 export const Footer = styled.View`

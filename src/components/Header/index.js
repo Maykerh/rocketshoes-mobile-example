@@ -1,22 +1,25 @@
 import React, { Component } from 'react';
-
-import { View, Image, Text } from 'react-native';
+import { connect } from 'react-redux';
 
 import { Container, Logo, CartIconWrapper, CartIconCounter } from './styles';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-export default class Header extends Component {
-    render() {
-        return (
-            <Container>
-                <Logo />
-                <CartIconWrapper
-                    onPress={() => this.props.navigation.navigate('Cart')}>
-                    <Icon name="shopping-basket" color="#FFF" size={24} />
-                    <CartIconCounter>{5}</CartIconCounter>
-                </CartIconWrapper>
-            </Container>
-        );
-    }
-}
+const Header = ({ navigation, cartSize }) => {
+    return (
+        <Container>
+            <Logo />
+            <CartIconWrapper onPress={() => navigation.navigate('Cart')}>
+                <Icon name="shopping-basket" color="#FFF" size={24} />
+                <CartIconCounter>{cartSize}</CartIconCounter>
+            </CartIconWrapper>
+        </Container>
+    );
+};
+
+export default connect(
+    state => ({
+        cartSize: state.cart.length,
+    }),
+    null
+)(Header);

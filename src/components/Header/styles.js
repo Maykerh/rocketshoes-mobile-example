@@ -18,9 +18,10 @@ export const Logo = styled.Image.attrs({
 })`
     width: 230px;
     height: 30px;
+    margin-top: -10px;
 `;
 
-export const CartIconWrapper = styled.View`
+export const CartIconWrapper = styled.TouchableOpacity`
     margin-right: 15px;
 `;
 
