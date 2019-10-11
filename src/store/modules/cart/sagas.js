@@ -37,7 +37,7 @@ function* addToCart({ id }) {
 }
 
 function* updateAmount({ id, amount }) {
-    if (amount < 0) {
+    if (amount <= 0) {
         return;
     }
 

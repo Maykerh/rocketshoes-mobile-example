@@ -34,6 +34,7 @@ export const ProductInfo = styled.View`
     background-color: #fff;
     height: 150px;
     width: 100%;
+    /* align-items: center; */
 `;
 
 export const ProductImage = styled.Image`
@@ -46,6 +47,11 @@ export const ProductDescription = styled.View`
     justify-content: center;
     height: 120px;
     margin-left: 15px;
+`;
+
+export const DeleteButton = styled.TouchableOpacity`
+    padding: 5px;
+    justify-content: center;
 `;
 
 export const ProductTitle = styled.Text`

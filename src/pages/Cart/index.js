@@ -18,6 +18,7 @@ import {
     ProductTitle,
     PriceText,
     ProductDescription,
+    DeleteButton,
     QuantityBand,
     QuantityActions,
     QuantityButton,
@@ -43,7 +44,6 @@ class Cart extends Component {
 
     changeAmount(product, qt) {
         const newAmount = product.amount + qt;
-        console.tron.log(newAmount);
 
         this.props.updateAmountRequest(product.id, newAmount);
     }
@@ -61,6 +61,14 @@ class Cart extends Component {
                         <ProductTitle>{product.title}</ProductTitle>
                         <PriceText>{product.priceFormatted}</PriceText>
                     </ProductDescription>
+                    <DeleteButton
+                        onPress={() => this.props.removeFromCart(product.id)}>
+                        <Icon
+                            name="delete-forever"
+                            size={24}
+                            color={'#7159c1'}
+                        />
+                    </DeleteButton>
                 </ProductInfo>
                 <QuantityBand>
                     <QuantityActions>

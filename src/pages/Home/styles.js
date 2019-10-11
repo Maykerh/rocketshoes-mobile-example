@@ -9,7 +9,9 @@ export const Container = styled.View`
 
 export const ProductList = styled.FlatList.attrs({
     horizontal: true,
-})``;
+})`
+    background-color: #141419;
+`;
 
 export const ProductCard = styled.View`
     background-color: #fff;
