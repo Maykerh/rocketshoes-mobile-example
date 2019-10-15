@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -30,25 +30,32 @@ import {
     ButtonText,
 } from './styles';
 
-class Cart extends Component {
-    constructor(props) {
-        super(props);
+export default function Cart() {
+    const products = useSelector(state =>
+        state.cart.map(product => ({
+            ...product,
+            subTotal: formatPrice(product.price * product.amount),
+        }))
+    );
 
-        this.renderProduct = this.renderProduct.bind(this);
-        this.changeAmount = this.changeAmount.bind(this);
+    const total = useSelector(state =>
+        formatPrice(
+            state.cart.reduce(
+                (total, product) => total + product.price * product.amount,
+                0
+            )
+        )
+    );
 
-        this.state = {
-            quantity: 1,
-        };
-    }
+    const dispatch = useDispatch();
 
-    changeAmount(product, qt) {
+    function changeAmount(product, qt) {
         const newAmount = product.amount + qt;
 
-        this.props.updateAmountRequest(product.id, newAmount);
+        dispatch(CartActions.updateAmountRequest(product.id, newAmount));
     }
 
-    renderProduct(product) {
+    function renderProduct(product) {
         return (
             <ProductCard>
                 <ProductInfo>
@@ -62,7 +69,9 @@ class Cart extends Component {
                         <PriceText>{product.priceFormatted}</PriceText>
                     </ProductDescription>
                     <DeleteButton
-                        onPress={() => this.props.removeFromCart(product.id)}>
+                        onPress={() =>
+                            dispatch(CartActions.removeFromCart(product.id))
+                        }>
                         <Icon
                             name="delete-forever"
                             size={24}
@@ -74,7 +83,7 @@ class Cart extends Component {
                     <QuantityActions>
                         <QuantityButton
                             onPress={() => {
-                                this.changeAmount(product, -1);
+                                changeAmount(product, -1);
                             }}>
                             <Icon
                                 name="remove-circle-outline"
@@ -90,7 +99,7 @@ class Cart extends Component {
                         />
                         <QuantityButton
                             onPress={() => {
-                                this.changeAmount(product, 1);
+                                changeAmount(product, 1);
                             }}>
                             <Icon
                                 name="add-circle-outline"
@@ -106,44 +115,20 @@ class Cart extends Component {
         );
     }
 
-    render() {
-        const { products, total } = this.props;
-        return (
-            <Container>
-                <CartScrollView>
-                    <CartWrapper>
-                        {products.map(product => this.renderProduct(product))}
-                        <Footer>
-                            <TotalText>{'TOTAL'}</TotalText>
-                            <TotalPrice>{total}</TotalPrice>
-                            <FinishButton>
-                                <ButtonText>{'Finalizar pedido'}</ButtonText>
-                            </FinishButton>
-                        </Footer>
-                    </CartWrapper>
-                </CartScrollView>
-            </Container>
-        );
-    }
+    return (
+        <Container>
+            <CartScrollView>
+                <CartWrapper>
+                    {products.map(product => renderProduct(product))}
+                    <Footer>
+                        <TotalText>{'TOTAL'}</TotalText>
+                        <TotalPrice>{total}</TotalPrice>
+                        <FinishButton>
+                            <ButtonText>{'Finalizar pedido'}</ButtonText>
+                        </FinishButton>
+                    </Footer>
+                </CartWrapper>
+            </CartScrollView>
+        </Container>
+    );
 }
-
-const mapStateToProps = state => ({
-    products: state.cart.map(product => ({
-        ...product,
-        subTotal: formatPrice(product.price * product.amount),
-    })),
-    total: formatPrice(
-        state.cart.reduce(
-            (total, product) => total + product.price * product.amount,
-            0
-        )
-    ),
-});
-
-const mapDispatchToProps = dispatch =>
-    bindActionCreators(CartActions, dispatch);
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Cart);

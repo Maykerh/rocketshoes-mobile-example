@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
 import {
     Container,
@@ -18,44 +18,39 @@ import { formatPrice } from '../../util/format';
 import { addToCartRequest } from '../../store/modules/cart/actions';
 import api from '../../services/api';
 
-class Home extends Component {
-    constructor(props) {
-        super(props);
+export default function Home() {
+    const [products, setProducts] = useState([]);
+    const amount = useSelector(state => {
+        return state.cart.reduce((amount, product) => {
+            amount[product.id] = product.amount;
 
-        this.loadProducts = this.loadProducts.bind(this);
-        this.renderProducts = this.renderProducts.bind(this);
-        this.addProductToCart = this.addProductToCart.bind(this);
+            return amount;
+        }, {});
+    });
 
-        this.state = {
-            products: [],
-        };
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        async function loadProducts() {
+            const result = await api.get('/products');
+
+            const data = result.data.map(product => ({
+                ...product,
+                titleFormated: product.title.substr(0, 40),
+                priceFormatted: formatPrice(product.price),
+            }));
+
+            setProducts(data);
+        }
+
+        loadProducts();
+    }, []);
+
+    function addProductToCart(id) {
+        dispatch(addToCartRequest(id));
     }
 
-    componentDidMount() {
-        this.loadProducts();
-    }
-
-    async loadProducts() {
-        const result = await api.get('/products');
-
-        const data = result.data.map(product => ({
-            ...product,
-            titleFormated: product.title.substr(0, 40),
-            priceFormatted: formatPrice(product.price),
-        }));
-
-        this.setState({
-            products: data,
-        });
-    }
-
-    addProductToCart(id) {
-        this.props.addToCartRequest(id);
-    }
-
-    renderProducts(product) {
-        const { amount } = this.props;
-
+    function renderProducts(product) {
         return (
             <ProductCard key={product.item.id}>
                 <ProductImage source={{ uri: product.item.image }} />
@@ -63,7 +58,7 @@ class Home extends Component {
                 <PriceText>{product.item.priceFormatted}</PriceText>
                 <AddButton
                     onPress={() => {
-                        this.addProductToCart(product.item.id);
+                        addProductToCart(product.item.id);
                     }}>
                     <QuantityWrapper>
                         <ButtonText>{amount[product.item.id] || 0}</ButtonText>
@@ -76,29 +71,9 @@ class Home extends Component {
         );
     }
 
-    render() {
-        const { products } = this.state;
-        return (
-            <Container>
-                <ProductList data={products} renderItem={this.renderProducts} />
-            </Container>
-        );
-    }
+    return (
+        <Container>
+            <ProductList data={products} renderItem={renderProducts} />
+        </Container>
+    );
 }
-
-const mapStateToProps = state => ({
-    amount: state.cart.reduce((amount, product) => {
-        amount[product.id] = product.amount;
-
-        return amount;
-    }, {}),
-});
-
-const mapDispatchToProps = dispatch => ({
-    addToCartRequest: id => dispatch(addToCartRequest(id)),
-});
-
-export default connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(Home);
